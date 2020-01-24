@@ -18,6 +18,34 @@ import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+
+  public static final class RobotMap{
+
+    // Control Panel
+    public static final int kControlPanelSparkMax = 69; //Placeholder
+    // PID constants
+    public static double kPanelP = 0.1;
+    public static double kPanelI = 0;
+    public static double kPanelD = 1;
+    public static double kPanelIzone = 0;
+    public static double kPanelFF = 0;
+    public static double kMaxOutput = 1;
+    public static double kMinOutput = -1;
+	  public static double rotations = 3;
+
+    // Shooter
+    public static final int kFlywheelTalonFX = 0;
+
+    // Intake Solenoids
+    public static final int kIntakeSoleniodRightOne = 69; //place holder
+    public static final int kIntakeSoleniodRightTwo = 69;
+    public static final int kIntakeSoleniodLeftOne = 69;
+    public static final int kIntakeSoleniodLeftTwo = 69;
+
+    // Intake motor
+    public static final int kIntakeWPI_TalonSRX = 6; //placeholder 
+  }
+  
   public static final class DriveConstants {
     public static final int kLeftMotor1Port = 0;
     public static final int kLeftMotor2Port = 1;

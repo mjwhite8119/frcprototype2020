@@ -22,14 +22,18 @@ import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveVoltageConstraint;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.Intake;
 
 import static edu.wpi.first.wpilibj.XboxController.Button;
 
@@ -42,6 +46,7 @@ import static edu.wpi.first.wpilibj.XboxController.Button;
 public class RobotContainer {
   // The robot's subsystems
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
+  private final Intake m_intake = new Intake();
 
   // The driver's controller
   XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
@@ -76,8 +81,72 @@ public class RobotContainer {
         .whenPressed(() -> m_robotDrive.setMaxOutput(0.5))
         .whenReleased(() -> m_robotDrive.setMaxOutput(1));
 
+  //  configureIntakeButtonsA(); 
+    configureIntakeButtonsB();    
   }
 
+  private void configureIntakeButtonsA() {
+
+    // Pickup balls from the ground
+    new JoystickButton(m_driverController, Button.kA.value).whenPressed(new SequentialCommandGroup(
+
+      //extend intake
+      new InstantCommand(m_intake::groundPickup, m_intake ),
+
+      //wait until intake deploys
+      new WaitCommand(1),
+
+      // run motors
+      new RunCommand(m_intake::startMotor, m_intake)
+    ));
+
+
+    // Stow the intake
+    new JoystickButton(m_driverController, Button.kB.value).whenReleased(new SequentialCommandGroup(
+      //stop motors
+      new InstantCommand(m_intake::stopMotor, m_intake),
+      //retract intake
+      new InstantCommand(m_intake::stowIntake, m_intake )
+    ));
+
+
+
+    // Pickup balls from the Player Station
+    new JoystickButton(m_driverController, Button.kX.value).whenPressed(new SequentialCommandGroup(
+
+      //extend intake
+      new InstantCommand(m_intake::stationPickup, m_intake ),
+
+      //wait until intake deploys
+      new WaitCommand(1),
+
+      // run motors
+      new RunCommand(m_intake::startMotor, m_intake)
+    ));
+
+  }
+
+  private void configureIntakeButtonsB() {
+    // Deploy the intake for ground pickup and start the motors
+    new JoystickButton(m_driverController, Button.kA.value)
+      .whenPressed(new RunCommand(m_intake::startMotor, m_intake)
+      .beforeStarting(m_intake::groundPickup)
+      .withTimeout(0.5)
+    );  
+
+    // Deploy the intake player station pickup and start the motors
+    new JoystickButton(m_driverController, Button.kB.value)
+      .whenPressed(new RunCommand(m_intake::startMotor, m_intake)
+      .beforeStarting(m_intake::stationPickup)
+      .withTimeout(0.5)
+    );  
+
+    // Stow the intake and stop the motors
+    new JoystickButton(m_driverController, Button.kX.value)
+      .whenPressed(new InstantCommand(m_intake::stowIntake, m_intake)
+      .beforeStarting(m_intake::stopMotor)
+    ); 
+  }  
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
