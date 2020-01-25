@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveVoltageConstraint;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -35,7 +36,9 @@ import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.RobotMap;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Intake;
+import frc.robot.types.ControlPanelColor;
 import frc.robot.subsystems.ControlPanelSubsystem;
+import frc.robot.commands.controlpanel.*;
 
 import static edu.wpi.first.wpilibj.XboxController.Button;
 
@@ -89,8 +92,12 @@ public class RobotContainer {
         .whenPressed(() -> m_controlPanel.rotateSegments(RobotMap.threeTurns));
 
     // Spin the control panel to target color
-    new JoystickButton(m_driverController, Button.kY.value)
-        .whenPressed(() -> m_controlPanel.rotateToColor());    
+    // new JoystickButton(m_driverController, Button.kY.value)
+    //     .whenPressed(new ConditionalCommand(RotateSegments(0.5, m_controlPanel),
+    //     RotateSegments(0.5, m_controlPanel),
+    //       m_controlPanel.getMatchedColor() == ControlPanelColor.UNKNOWN)
+    // );
+            
 
   //  configureIntakeButtonsA(); 
     configureIntakeButtonsB();    

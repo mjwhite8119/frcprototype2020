@@ -122,16 +122,6 @@ public class ControlPanelSubsystem extends SubsystemBase {
   }
 
   public void rotateToColor() {
-    int tries = 0;
-    while (getMatchedColor() == ControlPanelColor.UNKNOWN) {
-      // Rotate half and arc length and recheck
-      rotateSegments(0.5);
-
-  
-
-      // Abort after three tries
-    }
-
     // Got a color
     double segments = (getMatchedColor().ordinal() - m_targetColor) + 2;
     if (segments == 3) {segments = -1;}
