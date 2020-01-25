@@ -23,15 +23,19 @@ public final class Constants {
 
     // Control Panel
     public static final int kControlPanelSparkMax = 69; //Placeholder
+    public static final double kControlPanelCircumference = 0.81 * Math.PI;
+    public static final double kColorArcLength = kControlPanelCircumference / 8;
+    public static final double kManipulatorCircumference = 0.1 * Math.PI;
+    public static double threeTurns = 26.0; // Rotate 26 segments 
+    
     // PID constants
     public static double kPanelP = 0.1;
-    public static double kPanelI = 0;
+    public static double kPanelI = 1e-4;
     public static double kPanelD = 1;
     public static double kPanelIzone = 0;
     public static double kPanelFF = 0;
     public static double kMaxOutput = 1;
     public static double kMinOutput = -1;
-	  public static double rotations = 3;
 
     // Shooter
     public static final int kFlywheelTalonFX = 0;
