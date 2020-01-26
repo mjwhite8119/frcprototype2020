@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import java.util.function.BooleanSupplier;
+
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
@@ -24,7 +26,7 @@ public class ControlPanelSubsystem extends SubsystemBase {
   private final ColorSensorV3 m_colorSensor;
   private final ColorMatcher m_colorMatcher;
   private ControlPanelColor m_matchedColor;
-  private int m_targetColor;
+  private ControlPanelColor m_targetColor;
 
   private final CANSparkMax m_motor;
   private final CANEncoder m_encoder;
@@ -69,9 +71,18 @@ public class ControlPanelSubsystem extends SubsystemBase {
     return m_matchedColor;
   }
 
-  public int getTargetColor() {
+  // Returns whether a color is known
+  public BooleanSupplier unknownColor() {
+    BooleanSupplier sup = () -> false;
+    if (m_matchedColor == ControlPanelColor.UNKNOWN) {
+      sup = () -> true;
+    }
+    return sup;
+  }
+
+  public ControlPanelColor getTargetColor() {
     String gameData;
-    int targetColor = -1;
+    ControlPanelColor targetColor = ControlPanelColor.UNKNOWN;
     gameData = DriverStation.getInstance().getGameSpecificMessage();
     if(gameData.length() > 0)
     {
@@ -79,19 +90,19 @@ public class ControlPanelSubsystem extends SubsystemBase {
       {
         case 'B' :
           //Blue case code
-          targetColor = 1;
+          targetColor = ControlPanelColor.BLUE;
           break;
         case 'G' :
           //Green case code
-          targetColor = 2;
+          targetColor = ControlPanelColor.GREEN;
           break;
         case 'R' :
           //Red case code
-          targetColor = 0;
+          targetColor = ControlPanelColor.RED;
           break;
         case 'Y' :
           //Yellow case code
-          targetColor = 3;
+          targetColor = ControlPanelColor.YELLOW;
           break;
         default :
           //This is corrupt data
@@ -99,7 +110,8 @@ public class ControlPanelSubsystem extends SubsystemBase {
       }
     } else {
       //Code for no data received yet
-      targetColor = -1;
+      targetColor = ControlPanelColor.UNKNOWN
+      ;
     }
     return targetColor;
   }
@@ -123,7 +135,7 @@ public class ControlPanelSubsystem extends SubsystemBase {
 
   public void rotateToColor() {
     // Got a color
-    double segments = (getMatchedColor().ordinal() - m_targetColor) + 2;
+    double segments = (getMatchedColor().ordinal() - m_targetColor.ordinal()) + 2;
     if (segments == 3) {segments = -1;}
 
     // Rotate the control panel to the target color

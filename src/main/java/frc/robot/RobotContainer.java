@@ -92,12 +92,15 @@ public class RobotContainer {
         .whenPressed(() -> m_controlPanel.rotateSegments(RobotMap.threeTurns));
 
     // Spin the control panel to target color
-    // new JoystickButton(m_driverController, Button.kY.value)
-    //     .whenPressed(new ConditionalCommand(RotateSegments(0.5, m_controlPanel),
-    //     RotateSegments(0.5, m_controlPanel),
-    //       m_controlPanel.getMatchedColor() == ControlPanelColor.UNKNOWN)
-    // );
+    new JoystickButton(m_driverController, Button.kY.value)
+       .whenPressed(new ConditionalCommand(
+          new RotateSegments(0.5, m_controlPanel),
+          new RotateToColor(m_controlPanel),
+          m_controlPanel.unknownColor()
+        )
+    );
             
+
 
   //  configureIntakeButtonsA(); 
     configureIntakeButtonsB();    
