@@ -69,15 +69,7 @@ public class ControlPanelSubsystem extends SubsystemBase {
     return m_matchedColor;
   }
 
-  // Returns whether a color is known
-  public BooleanSupplier unknownColor() {
-    BooleanSupplier sup = () -> false;
-    if (m_matchedColor == ControlPanelColor.UNKNOWN) {
-      sup = () -> true;
-    }
-    return sup;
-  }
-
+  // Get the target color from the game field
   public ControlPanelColor getTargetColor() {
     String gameData;
     ControlPanelColor targetColor = ControlPanelColor.UNKNOWN;
@@ -115,16 +107,6 @@ public class ControlPanelSubsystem extends SubsystemBase {
     return targetColor;
   }
   
-
-  public double getMotorPosition() {
-    return m_encoder.getPosition();
-  }
-
-  // Closed position loop using number of rotations as the setpoint
-  public void runPositionLoop(double rotations) {
-    m_pidController.setReference(rotations, ControlType.kPosition);
-  }
-
   // Rotate the control panel the number of specified segments
   public void rotateSegments(double segments) {
     // Calculate the number of manipulator wheel rotations
@@ -132,14 +114,11 @@ public class ControlPanelSubsystem extends SubsystemBase {
     runPositionLoop(rotations);
   }
 
-  public void rotateHalfSegment() {
-    rotateSegments(0.5);
-  }
-
+  // Gets the detected and target color and rotates to target color
   public void rotateToColor() {
     // Get the matched and target color. Add 2 segments to move it to position
     double segments = (getMatchedColor().ordinal() - getTargetColor().ordinal()) + 2;
-    // Faster to spin in reverse if segments is 3
+    // Faster to spin in reverse if segments equals 3
     if (segments == 3) {segments = -1;}
 
     // Rotate the control panel to the computed number of segment
@@ -147,7 +126,34 @@ public class ControlPanelSubsystem extends SubsystemBase {
     rotateSegments(segments);
   }
 
+  // Returns whether a color is known
+  public BooleanSupplier unknownColor() {
+    BooleanSupplier sup = () -> false;
+    if (m_matchedColor == ControlPanelColor.UNKNOWN) {
+      sup = () -> true;
+    }
+    return sup;
+  }
+
+  // Convenience method for running inline command
+  public void rotateHalfSegment() {
+    rotateSegments(0.5);
+  }
+
+  // -- Motor control methods --
+
+  // Set a power level from 0.0 to 1.0
   public void setMotorPower(double power) {
     m_motor.set(power);
+  }
+
+  // Read the motor encoder position
+  public double getMotorPosition() {
+    return m_encoder.getPosition();
+  }
+
+  // Closed position loop using number of rotations as the setpoint
+  public void runPositionLoop(double rotations) {
+    m_pidController.setReference(rotations, ControlType.kPosition);
   }
 }
