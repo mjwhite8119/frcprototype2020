@@ -81,10 +81,26 @@ public class RobotContainer {
    * {@link JoystickButton}.
    */
   private void configureButtonBindings() {
+
+    configureDriveJoystick();
+
+    configureControlPanelButtons();
+
+  //  configureIntakeButtonsA(); 
+    configureIntakeButtonsB();    
+  }
+
+  // Configure buttons for the Intake subsystem
+  private void configureDriveJoystick() {
+
     // Drive at half speed when the right bumper is held
     new JoystickButton(m_driverController, Button.kBumperRight.value)
         .whenPressed(() -> m_robotDrive.setMaxOutput(0.5))
         .whenReleased(() -> m_robotDrive.setMaxOutput(1));
+  }
+
+  // Configure buttons for the ControlPanel subsystem
+  private void configureControlPanelButtons() {
 
     // Spin the control panel three times
     new JoystickButton(m_driverController, Button.kY.value)
@@ -106,9 +122,6 @@ public class RobotContainer {
           m_controlPanel.unknownColor()
         )
     );
-
-  //  configureIntakeButtonsA(); 
-    configureIntakeButtonsB();    
   }
 
   private void configureIntakeButtonsA() {
@@ -135,8 +148,6 @@ public class RobotContainer {
       new InstantCommand(m_intake::stowIntake, m_intake )
     ));
 
-
-
     // Pickup balls from the Player Station
     new JoystickButton(m_driverController, Button.kX.value).whenPressed(new SequentialCommandGroup(
 
@@ -152,6 +163,7 @@ public class RobotContainer {
 
   }
 
+  // Configure buttons for the Intake subsystem
   private void configureIntakeButtonsB() {
     // Deploy the intake for ground pickup and start the motors
     new JoystickButton(m_driverController, Button.kA.value)
