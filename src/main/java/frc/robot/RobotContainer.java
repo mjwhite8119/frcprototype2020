@@ -94,15 +94,15 @@ public class RobotContainer {
     new JoystickButton(m_driverController, Button.kY.value)
        .whenPressed(new ConditionalCommand(
 
-          // The detected color is unknown
+          // TRUE - the detected color is unknown
           new RotateToColor(m_controlPanel)
             // so rotate half a segment before rotating to color
             .beforeStarting(m_controlPanel::rotateHalfSegment),
 
-          // We detected the color so rotate to target color
+          // FALSE - the color is known so rotate to target color
           new RotateToColor(m_controlPanel),
 
-          // Condition - is the color unknown
+          // CONDITION - is the color unknown?
           m_controlPanel.unknownColor()
         )
     );

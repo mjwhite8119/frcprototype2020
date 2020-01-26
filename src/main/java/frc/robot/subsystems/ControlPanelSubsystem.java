@@ -65,6 +65,7 @@ public class ControlPanelSubsystem extends SubsystemBase {
 
   // Returns an enum of the matched color from 0-4
   public ControlPanelColor getMatchedColor() {
+    SmartDashboard.putString("Matched Color ", m_matchedColor.name());
     return m_matchedColor;
   }
 
@@ -110,6 +111,7 @@ public class ControlPanelSubsystem extends SubsystemBase {
       targetColor = ControlPanelColor.UNKNOWN
       ;
     }
+    SmartDashboard.putString("Target Color ", targetColor.name());
     return targetColor;
   }
   
@@ -141,6 +143,7 @@ public class ControlPanelSubsystem extends SubsystemBase {
     if (segments == 3) {segments = -1;}
 
     // Rotate the control panel to the computed number of segment
+    SmartDashboard.putNumber("Segment rotation ", segments);
     rotateSegments(segments);
   }
 
