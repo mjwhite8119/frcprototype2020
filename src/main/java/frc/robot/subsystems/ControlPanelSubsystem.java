@@ -26,7 +26,6 @@ public class ControlPanelSubsystem extends SubsystemBase {
   private final ColorSensorV3 m_colorSensor;
   private final ColorMatcher m_colorMatcher;
   private ControlPanelColor m_matchedColor;
-  private ControlPanelColor m_targetColor;
 
   private final CANSparkMax m_motor;
   private final CANEncoder m_encoder;
@@ -62,8 +61,6 @@ public class ControlPanelSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Red", detectedColor.red);
     SmartDashboard.putNumber("Green", detectedColor.green);
     SmartDashboard.putNumber("Blue", detectedColor.blue);
-
-    m_targetColor = getTargetColor();
   }
 
   // Returns an enum of the matched color from 0-4
@@ -133,12 +130,17 @@ public class ControlPanelSubsystem extends SubsystemBase {
     runPositionLoop(rotations);
   }
 
+  public void rotateHalfSegment() {
+    rotateSegments(0.5);
+  }
+
   public void rotateToColor() {
-    // Got a color
-    double segments = (getMatchedColor().ordinal() - m_targetColor.ordinal()) + 2;
+    // Get the matched and target color. Add 2 segments to move it to position
+    double segments = (getMatchedColor().ordinal() - getTargetColor().ordinal()) + 2;
+    // Faster to spin in reverse if segments is 3
     if (segments == 3) {segments = -1;}
 
-    // Rotate the control panel to the target color
+    // Rotate the control panel to the computed number of segment
     rotateSegments(segments);
   }
 

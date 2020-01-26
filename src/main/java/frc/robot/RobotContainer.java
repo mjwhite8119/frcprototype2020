@@ -36,7 +36,6 @@ import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.RobotMap;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Intake;
-import frc.robot.types.ControlPanelColor;
 import frc.robot.subsystems.ControlPanelSubsystem;
 import frc.robot.commands.controlpanel.*;
 
@@ -94,13 +93,19 @@ public class RobotContainer {
     // Spin the control panel to target color
     new JoystickButton(m_driverController, Button.kY.value)
        .whenPressed(new ConditionalCommand(
-          new RotateSegments(0.5, m_controlPanel),
+
+          // The detected color is unknown
+          new RotateToColor(m_controlPanel)
+            // so rotate half a segment before rotating to color
+            .beforeStarting(m_controlPanel::rotateHalfSegment),
+
+          // We detected the color so rotate to target color
           new RotateToColor(m_controlPanel),
+
+          // Condition - is the color unknown
           m_controlPanel.unknownColor()
         )
     );
-            
-
 
   //  configureIntakeButtonsA(); 
     configureIntakeButtonsB();    

@@ -23,8 +23,6 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 // import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
-import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
-
 
 
 public class Intake extends SubsystemBase {
@@ -39,16 +37,12 @@ public class Intake extends SubsystemBase {
 
   private WPI_TalonSRX m_intakeMotor;
 
- 
- 
-
   public enum IntakeState {
     GROUND_PICKUP,STATION_PICKUP,STOWED;
   }
 
-  private IntakeState currentState;
 
-   public Intake() {
+  public Intake() {
     kIntakeSolenoidRightBase = new Solenoid(RobotMap.kIntakeSoleniodRightOne);
     kIntakeSolenoidRightArm = new Solenoid(RobotMap.kIntakeSoleniodRightTwo);
     kIntakeSolenoidLeftBase= new Solenoid(RobotMap.kIntakeSoleniodLeftOne);
@@ -111,8 +105,6 @@ public class Intake extends SubsystemBase {
       default:
       break;
       }
-
-      currentState = state;
     }
 
   public void setPower (double power) {
