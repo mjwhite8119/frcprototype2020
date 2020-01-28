@@ -52,6 +52,12 @@ public final class Constants {
 
     // Intake motor
     public static final int kIntakeWPI_TalonSRX = 6; //placeholder 
+
+    public static final int kHopperVictorSPX = 420; //Placeholder
+    public static final int kTowerVictorSPX = 987; //Placerholder
+    public static final int kIRSensorBottom = 0;
+    public static final int kIRSensorMiddle = 1;
+    public static final int kIRSensorTop = 2;
   }
   
   public static final class DriveConstants {
