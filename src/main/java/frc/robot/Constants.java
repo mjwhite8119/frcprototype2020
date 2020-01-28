@@ -39,6 +39,10 @@ public final class Constants {
 
     // Shooter
     public static final int kFlywheelTalonFX = 0;
+    public static final int kHoodTalonSRX = 5;
+    public static final double kTargetHeight = 4.0;
+    public static final double kTurretHeight = 1.0;
+    public static final double kRelativeTargetHeight = kTargetHeight - kTurretHeight;
 
     // Intake Solenoids
     public static final int kIntakeSoleniodRightOne = 69; //place holder
@@ -88,6 +92,25 @@ public final class Constants {
 
   public static final class OIConstants {
     public static final int kDriverControllerPort = 1;
+  }
+
+  public static final class ConversionConstants{
+      
+    public static final double kFlywheelEncoderTicksPerRotation = 2048;
+    public static final double kFlywheelGearRatio = 24.0/14.0;
+
+    public static final double kHoodEncoderTicksPerRotation = 4096;
+    public static final double kHoodGearRatio = 60.0/24.0; 
+  }
+
+  public static final class PIDConstants{
+
+    //Shooter
+    public static final double kFlywheelkP = 0.075;
+    public static final double kFlywheelkF = 0.0467;
+    public static final double kHoodkP = 2.5;
+    public static final double kHoodkD = 15;
+
   }
 
   public static final class AutoConstants {
