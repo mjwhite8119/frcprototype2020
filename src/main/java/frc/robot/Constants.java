@@ -53,11 +53,17 @@ public final class Constants {
     // Intake motor
     public static final int kIntakeWPI_TalonSRX = 6; //placeholder 
 
+  }
+
+  public static final class FeederConstants {
     public static final int kHopperVictorSPX = 420; //Placeholder
     public static final int kTowerVictorSPX = 987; //Placerholder
     public static final int kIRSensorBottom = 0;
     public static final int kIRSensorMiddle = 1;
     public static final int kIRSensorTop = 2;
+
+    public static final double indexPower = 0.4;
+    public static final double indexSetpoint = 100;
   }
   
   public static final class DriveConstants {
@@ -107,6 +113,10 @@ public final class Constants {
 
     public static final double kHoodEncoderTicksPerRotation = 4096;
     public static final double kHoodGearRatio = 60.0/24.0; 
+
+    public static final double kTowerEncoderTicksPerRotation = 2048;
+    public static final double kTowerGearRatio = 24.0/14.0;
+
   }
 
   public static final class PIDConstants{
