@@ -26,8 +26,10 @@ public class FeederSubsystem extends SubsystemBase {
   private DigitalOutput m_middleSensor;
   private DigitalOutput m_topSensor;
 
-  private final double m_indexPower = FeederConstants.indexPower;
-  private final double m_indexSetpoint = FeederConstants.indexSetpoint;
+  private final double m_indexPowerInitial = FeederConstants.indexPower;
+  private final double m_indexSetpointInitial = FeederConstants.indexSetpoint;
+  private double m_indexPower = m_indexPowerInitial;
+  private double m_indexSetpoint = m_indexSetpointInitial;
 
   public enum FeederState{
     STOPPED, WAITING, INDEXING, FEEDING, FULL;
@@ -66,8 +68,8 @@ public class FeederSubsystem extends SubsystemBase {
     resetTowerEncoder();
 
     //Placing the indexing values on ShuffleBoard
-    SmartDashboard.putNumber("Index Power", m_indexPower);
-    SmartDashboard.putNumber("Index Setpoint", m_indexSetpoint);
+    SmartDashboard.putNumber("Index Power", m_indexPowerInitial);
+    SmartDashboard.putNumber("Index Setpoint", m_indexSetpointInitial);
     SmartDashboard.putString("Index State", m_indexState.name());
    
   }
@@ -99,13 +101,20 @@ public class FeederSubsystem extends SubsystemBase {
   public void runIndex() {
 
     // Move until index sensor is tripped. This happens in checkIndexState()
-    double power = SmartDashboard.getNumber("Index Power", m_indexPower);
-    setTowerPower(power);
+    
+    setTowerPower(m_indexPower);
 
     // Run a PID loop within the Talon controller.
-    double position = SmartDashboard.getNumber("Index Power", m_indexSetpoint);
-    m_towerMotor.set(ControlMode.Position, position);
+    m_towerMotor.set(ControlMode.Position, m_indexSetpoint);
 
+  }
+
+  public void configIndexPower() {
+    m_indexPower = SmartDashboard.getNumber("Index Power", m_indexPowerInitial);
+  }
+
+  public void configIndexSetpoint() {
+    m_indexSetpoint = SmartDashboard.getNumber("Index Setpoint", m_indexSetpointInitial);
   }
 
   public void stopIndex() {
@@ -133,12 +142,6 @@ public class FeederSubsystem extends SubsystemBase {
 
   }
 
- /** Is checking to make sure current state is true
-   * To do: Put flag in index if balls in motion
-   * Also add in timer for checking sensors  
-   */
-  
-
   /** 
    * Check the state of the index to determine what action should 
    * be taken next.
@@ -159,6 +162,10 @@ public class FeederSubsystem extends SubsystemBase {
       m_indexState = IndexState.WAITING_TO_INDEX;
     }
 
+  }
+
+  public void setIndexState(IndexState state) {
+    m_indexState = state;
   }
 
   public boolean bottomSensorTripped(){

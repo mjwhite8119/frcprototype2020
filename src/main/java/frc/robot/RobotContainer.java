@@ -35,6 +35,7 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.RobotMap;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.FeederSubsystem;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.ControlPanelSubsystem;
 import frc.robot.commands.controlpanel.*;
@@ -52,6 +53,7 @@ public class RobotContainer {
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
   private final Intake m_intake = new Intake();
   private final ControlPanelSubsystem m_controlPanel = new ControlPanelSubsystem();
+  private final FeederSubsystem m_feeder = new FeederSubsystem();
 
   // The driver's controller
   XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
@@ -72,6 +74,12 @@ public class RobotContainer {
             .arcadeDrive(m_driverController.getY(GenericHID.Hand.kLeft),
                          m_driverController.getX(GenericHID.Hand.kRight)), m_robotDrive));
 
+  }
+
+  public void onInitialize(){
+    // Used for testing. Gets feeder values from the dashboard
+    m_feeder.configIndexPower();;
+    m_feeder.configIndexSetpoint();
   }
 
   /**
