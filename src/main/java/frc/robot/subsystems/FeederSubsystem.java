@@ -65,7 +65,7 @@ public class FeederSubsystem extends SubsystemBase {
     m_towerMotor.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
     m_towerMotor.configAllowableClosedloopError(0, 5);
 
-    resetTowerEncoder();
+    resetIndexEncoder();
 
     //Placing the indexing values on ShuffleBoard
     SmartDashboard.putNumber("Index Power", m_indexPowerInitial);
@@ -178,7 +178,7 @@ public class FeederSubsystem extends SubsystemBase {
     return m_topSensor.get();
   }
 
-  public void resetTowerEncoder(){
+  public void resetIndexEncoder(){
     m_towerMotor.setSelectedSensorPosition(0);
   }
 
