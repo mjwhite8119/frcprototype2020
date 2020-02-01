@@ -45,22 +45,22 @@ public class FeederSubsystem extends SubsystemBase {
   // ---- Constructor -----
   public FeederSubsystem() {
 
-   m_hopperMotor = new WPI_VictorSPX(FeederConstants.kHopperVictorSPX);
-   m_towerMotor = new WPI_VictorSPX(FeederConstants.kTowerVictorSPX);
+    m_hopperMotor = new WPI_VictorSPX(FeederConstants.kHopperVictorSPX);
+    m_towerMotor = new WPI_VictorSPX(FeederConstants.kTowerVictorSPX);
 
-   m_bottomSensor = new DigitalOutput(FeederConstants.kIRSensorBottom);
-   m_middleSensor = new DigitalOutput(FeederConstants.kIRSensorMiddle);
-   m_topSensor = new DigitalOutput(FeederConstants.kIRSensorTop);
+    m_bottomSensor = new DigitalOutput(FeederConstants.kIRSensorBottom);
+    m_middleSensor = new DigitalOutput(FeederConstants.kIRSensorMiddle);
+    m_topSensor = new DigitalOutput(FeederConstants.kIRSensorTop);
 
-   for(WPI_VictorSPX feederMotors: new WPI_VictorSPX[]{m_hopperMotor, m_towerMotor}){
-    feederMotors.configFactoryDefault();
-    feederMotors.configVoltageCompSaturation(12);
-    feederMotors.enableVoltageCompensation(true);
-    feederMotors.configNominalOutputForward(0);
-    feederMotors.configNominalOutputReverse(0);
-    feederMotors.configNeutralDeadband(0.01);
-    feederMotors.setNeutralMode(NeutralMode.Coast);
-   }
+    for(WPI_VictorSPX feederMotors: new WPI_VictorSPX[]{m_hopperMotor, m_towerMotor}){
+      feederMotors.configFactoryDefault();
+      feederMotors.configVoltageCompSaturation(12);
+      feederMotors.enableVoltageCompensation(true);
+      feederMotors.configNominalOutputForward(0);
+      feederMotors.configNominalOutputReverse(0);
+      feederMotors.configNeutralDeadband(0.01);
+      feederMotors.setNeutralMode(NeutralMode.Coast);
+    }
     
     m_towerMotor.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
     m_towerMotor.configAllowableClosedloopError(0, 5);
@@ -74,13 +74,20 @@ public class FeederSubsystem extends SubsystemBase {
    
   }
 
+  @Override
+  public void periodic() {
+    // Moves incoming ball up the tower. 
+    // This method will be called once per scheduler
+    index();
+  }
+
   // Set power to the hopper motor
   public void setHopperPower(double power){
     m_hopperMotor.set(ControlMode.PercentOutput, power);
   }
 
   // Set power to the tower motor
-  public void setTowerPower(double power){
+  public void setIndexPower(double power){
     m_towerMotor.set(ControlMode.PercentOutput, power);
   } 
 
@@ -98,27 +105,18 @@ public class FeederSubsystem extends SubsystemBase {
    * so we can test which one works best.
    * Comment out the one that you are not going to use.  
   */
-  public void runIndex() {
+  public void startIndex() {
 
     // Move until index sensor is tripped. This happens in checkIndexState()
-    
-    setTowerPower(m_indexPower);
+    setIndexPower(m_indexPower);
 
     // Run a PID loop within the Talon controller.
     m_towerMotor.set(ControlMode.Position, m_indexSetpoint);
 
   }
 
-  public void configIndexPower() {
-    m_indexPower = SmartDashboard.getNumber("Index Power", m_indexPowerInitial);
-  }
-
-  public void configIndexSetpoint() {
-    m_indexSetpoint = SmartDashboard.getNumber("Index Setpoint", m_indexSetpointInitial);
-  }
-
   public void stopIndex() {
-    setTowerPower(0);
+    setIndexPower(0);
   }
 
   //Called in a loop at periodic
@@ -130,7 +128,7 @@ public class FeederSubsystem extends SubsystemBase {
 
     if (m_indexState == IndexState.READY_TO_INDEX) {
       stopHopper(); // Prevent more balls from coming in
-      runIndex(); // Move the ball up the tower
+      startIndex(); // Move the ball up the tower
       m_feederState = FeederState.INDEXING;
     } else {
       stopIndex(); // Done moving ball up the tower    
@@ -172,9 +170,9 @@ public class FeederSubsystem extends SubsystemBase {
     return m_bottomSensor.get();
   }
 
-  public boolean middleSensorTripped(){
-    return m_middleSensor.get();
-  }
+  // public boolean middleSensorTripped(){
+  //   return m_middleSensor.get();
+  // }
 
   public boolean topSensorTripped(){
     return m_topSensor.get();
@@ -184,11 +182,13 @@ public class FeederSubsystem extends SubsystemBase {
     m_towerMotor.setSelectedSensorPosition(0);
   }
 
-  @Override
-  public void periodic() {
-    // Moves incoming ball up the tower. 
-    // This method will be called once per scheduler
-    index();
+  // These are for calibrating the index 
+  public void configIndexPower() {
+    m_indexPower = SmartDashboard.getNumber("Index Power", m_indexPowerInitial);
+  }
+
+  public void configIndexSetpoint() {
+    m_indexSetpoint = SmartDashboard.getNumber("Index Setpoint", m_indexSetpointInitial);
   }
 
 }
