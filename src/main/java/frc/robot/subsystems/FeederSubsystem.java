@@ -31,15 +31,15 @@ public class FeederSubsystem extends SubsystemBase {
   private double m_indexPower = m_indexPowerInitial;
   private double m_indexSetpoint = m_indexSetpointInitial;
 
-  public enum FeederState{
-    STOPPED, WAITING, INDEXING, FEEDING, FULL;
+  public enum HopperState{
+    STOPPED, FEEDING, REVERSED, FULL;
   }
 
   public enum IndexState{
-    WAITING_TO_INDEX, READY_TO_INDEX, FULL;
+    WAITING_TO_INDEX, READY_TO_INDEX, INDEXING, FULL;
   }
 
-  private FeederState m_feederState = FeederState.WAITING;
+  private HopperState m_hopperState = HopperState.STOPPED;
   private IndexState m_indexState = IndexState.WAITING_TO_INDEX;
 
   // ---- Constructor -----
@@ -93,11 +93,21 @@ public class FeederSubsystem extends SubsystemBase {
 
   // Stop the hopper
   public void startHopper() {
+    m_hopperMotor.setInverted(false);
+    m_hopperState = HopperState.FEEDING;
     setHopperPower(0.4);
   }
   // Stop the hopper
   public void stopHopper() {
     setHopperPower(0);
+    m_hopperState = HopperState.STOPPED;
+  }
+
+  // Stop the hopper
+  public void reverseHopper() {
+    m_hopperMotor.setInverted(true);
+    m_hopperState = HopperState.REVERSED;
+    setHopperPower(0.4);
   }
 
   /**
@@ -107,11 +117,16 @@ public class FeederSubsystem extends SubsystemBase {
   */
   public void startIndex() {
 
+    // Set state to INDEXING. This will get cleared in checkIndexState()
+    m_indexState = IndexState.INDEXING;
+
     // Move until index sensor is tripped. This happens in checkIndexState()
     setIndexPower(m_indexPower);
 
+    // OR
+
     // Run a PID loop within the Talon controller.
-    m_towerMotor.set(ControlMode.Position, m_indexSetpoint);
+    //m_towerMotor.set(ControlMode.Position, m_indexSetpoint);
 
   }
 
@@ -129,7 +144,6 @@ public class FeederSubsystem extends SubsystemBase {
     if (m_indexState == IndexState.READY_TO_INDEX) {
       stopHopper(); // Prevent more balls from coming in
       startIndex(); // Move the ball up the tower
-      m_feederState = FeederState.INDEXING;
     } else {
       stopIndex(); // Done moving ball up the tower    
     }
@@ -176,6 +190,24 @@ public class FeederSubsystem extends SubsystemBase {
 
   public boolean topSensorTripped(){
     return m_topSensor.get();
+  }
+
+  // Toggle the hopper on and off while in FEEDING state.
+  public void toggleFeedingHopper() {
+    if (m_hopperState == HopperState.FEEDING) {
+      stopHopper();
+    } else {
+      startHopper();
+    }  
+  }
+
+  // Toggle the hopper on and off while in REVERSED state.
+  public void toggleReversedHopper() {
+    if (m_hopperState == HopperState.REVERSED) {
+      stopHopper();
+    } else {
+      startHopper();
+    }  
   }
 
   public void resetIndexEncoder(){
