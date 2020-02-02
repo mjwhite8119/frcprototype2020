@@ -32,11 +32,11 @@ public class FeederSubsystem extends SubsystemBase {
   private double m_indexSetpoint = m_indexSetpointInitial;
 
   public enum HopperState{
-    STOPPED, FEEDING, REVERSED, FULL;
+    STOPPED, FEEDING, REVERSED, HALTED;
   }
 
   public enum IndexState{
-    WAITING_TO_INDEX, READY_TO_INDEX, INDEXING, FULL;
+    WAITING_TO_INDEX, READY_TO_INDEX, INDEXING, FULL, HALTED;
   }
 
   private HopperState m_hopperState = HopperState.STOPPED;
@@ -178,6 +178,10 @@ public class FeederSubsystem extends SubsystemBase {
 
   public void setIndexState(IndexState state) {
     m_indexState = state;
+  }
+
+  public void setHopperState(HopperState state) {
+    m_hopperState = state;
   }
 
   public boolean bottomSensorTripped(){
