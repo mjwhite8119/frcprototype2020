@@ -166,6 +166,11 @@ public class FeederSubsystem extends SubsystemBase {
       return;
     }
 
+    if(middleSensorTripped()){
+      m_indexState = IndexState.WAITING_TO_INDEX;
+      return;
+    }
+
     if(bottomSensorTripped() && !topSensorTripped()){
       // We have a ball on the bottom and the top slot is open
       m_indexState = IndexState.READY_TO_INDEX;
@@ -188,9 +193,9 @@ public class FeederSubsystem extends SubsystemBase {
     return m_bottomSensor.get();
   }
 
-  // public boolean middleSensorTripped(){
-  //   return m_middleSensor.get();
-  // }
+  public boolean middleSensorTripped(){
+    return m_middleSensor.get();
+  }
 
   public boolean topSensorTripped(){
     return m_topSensor.get();

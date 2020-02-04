@@ -6,7 +6,7 @@ import frc.robot.subsystems.FeederSubsystem.HopperState;
 import frc.robot.subsystems.FeederSubsystem.IndexState;
 
 /**
- * Stops the FeederSubsytem
+ * Stops the feeder subsystem
  */
 public class StartFeeder extends CommandBase {
   // The subsystem the command runs on
@@ -28,9 +28,8 @@ public class StartFeeder extends CommandBase {
     m_feeder.index();
   }
   
-//   @Override
-//   public void end() {
-//     m_feeder.setHopperState(HopperState.HALTED);
-//     m_feeder.setIndexState(IndexState.HALTED);
-//   }
+  public void end() {
+    m_feeder.setHopperState(HopperState.HALTED);
+    m_feeder.setIndexState(IndexState.HALTED);
+  }
 }
