@@ -64,7 +64,13 @@ public class Intake extends SubsystemBase {
     // m_intakeMotor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
   }
 
+  @Override
+  public void periodic() {
+    // This method will be called once per scheduler run
+    double current = m_intakeMotor.getSupplyCurrent(); 
+    SmartDashboard.putNumber("intake current", current);
 
+  }
 
   public void groundPickup () {
     moveIntake(IntakeState.GROUND_PICKUP);
@@ -119,11 +125,4 @@ public class Intake extends SubsystemBase {
     setPower(0);
   }
 
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
-    double current = m_intakeMotor.getSupplyCurrent(); 
-    SmartDashboard.putNumber("intake current", current);
-
-  }
 }

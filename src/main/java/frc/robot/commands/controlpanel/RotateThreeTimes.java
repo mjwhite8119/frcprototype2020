@@ -2,6 +2,7 @@ package frc.robot.commands.controlpanel;
 
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.PIDCommand;
+import frc.robot.Constants.PIDConstants;
 import frc.robot.Constants.RobotMap;
 import frc.robot.subsystems.ControlPanelSubsystem;
 
@@ -17,7 +18,7 @@ public class RotateThreeTimes extends PIDCommand {
    */
   public RotateThreeTimes(double targetPosition, ControlPanelSubsystem controlPanel) {
     super(
-        new PIDController(RobotMap.kPanelP, RobotMap.kPanelI, RobotMap.kPanelD),
+        new PIDController(PIDConstants.kPanelP, PIDConstants.kPanelI, PIDConstants.kPanelD),
         // Close loop on heading
         controlPanel::getMotorPosition,
         // Set reference to target

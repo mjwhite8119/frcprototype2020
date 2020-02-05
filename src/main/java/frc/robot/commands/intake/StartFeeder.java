@@ -28,7 +28,8 @@ public class StartFeeder extends CommandBase {
     m_feeder.index();
   }
   
-  public void end() {
+  @Override
+  public void end(boolean interrupted) {
     m_feeder.setHopperState(HopperState.HALTED);
     m_feeder.setIndexState(IndexState.HALTED);
   }

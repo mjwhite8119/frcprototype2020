@@ -27,15 +27,11 @@ public final class Constants {
     public static final double kColorArcLength = kControlPanelCircumference / 8;
     public static final double kManipulatorCircumference = 0.1 * Math.PI;
     public static double threeTurns = 26.0; // Rotate 26 segments 
-    
-    // PID constants
-    public static double kPanelP = 0.1;
-    public static double kPanelI = 1e-4;
-    public static double kPanelD = 1;
-    public static double kPanelIzone = 0;
-    public static double kPanelFF = 0;
-    public static double kMaxOutput = 1;
-    public static double kMinOutput = -1;
+
+    //Climber
+    public static final int kClimberTalonFX = 5; //Placeholder
+    public static final int kClimberSolenoidBrake = 420;
+    public static final int kClimberTomahawk = 420;
 
     // Shooter
     public static final int kFlywheelTalonFX = 0;
@@ -53,17 +49,18 @@ public final class Constants {
     // Intake motor
     public static final int kIntakeWPI_TalonSRX = 6; //placeholder 
 
-  }
-
-  public static final class FeederConstants {
+    // Feeder
     public static final int kHopperVictorSPX = 420; //Placeholder
     public static final int kTowerVictorSPX = 987; //Placerholder
     public static final int kIRSensorBottom = 0;
     public static final int kIRSensorMiddle = 1;
     public static final int kIRSensorTop = 2;
 
-    public static final double indexPower = 0.4;
-    public static final double indexSetpoint = 100;
+  }
+
+  public static final class FeederConstants {
+  
+
   }
   
   public static final class DriveConstants {
@@ -107,13 +104,21 @@ public final class Constants {
   }
 
   public static final class ConversionConstants{
-      
+     
+    // Flywheel
     public static final double kFlywheelEncoderTicksPerRotation = 2048;
     public static final double kFlywheelGearRatio = 24.0/14.0;
 
+    // Shooter
     public static final double kHoodEncoderTicksPerRotation = 4096;
     public static final double kHoodGearRatio = 60.0/24.0; 
 
+    // Climber
+    public static final double kClimberEncoderTicksPerRotation = 2048; 
+    public static final double kClimberGearRatio = 54 / 1;
+    public static final double kDistancePerPullyRotation = 420; //Placeholder
+
+    // Feeder
     public static final double kTowerEncoderTicksPerRotation = 2048;
     public static final double kTowerGearRatio = 24.0/14.0;
 
@@ -121,11 +126,37 @@ public final class Constants {
 
   public static final class PIDConstants{
 
+    // Control Panel
+    public static double kPanelP = 0.1;
+    public static double kPanelI = 1e-4;
+    public static double kPanelD = 1;
+    public static double kPanelIzone = 0;
+    public static double kPanelFF = 0;
+    public static double kMaxOutput = 1;
+    public static double kMinOutput = -1;
+
     //Shooter
     public static final double kFlywheelkP = 0.075;
     public static final double kFlywheelkF = 0.0467;
     public static final double kHoodkP = 2.5;
     public static final double kHoodkD = 15;
+
+    // Climber
+    public static double kClimberP = 0.1;
+    public static double kClimberI = 1e-4;
+    public static double kClimberD = 1;
+    public static int kClimberIzone = 0;
+    public static double kClimberFF = 0;
+
+    public static final double kStowedPositionSetpoint = 0.0; // Meters
+    public static final double kLowPositionSetpoint = 1.0; // Meters
+    public static final double kMidPositionSetpoint = 1.2; // Meters
+    public static final double kHighPositionSetpoint = 1.4; // Meters
+    public static final double kLiftPositionSetpoint = -0.5; // Meters
+
+    // Feeder
+    public static final double indexPower = 0.4;
+    public static final double indexSetpoint = 100;
 
   }
 

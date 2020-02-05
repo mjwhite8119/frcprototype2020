@@ -8,7 +8,9 @@ import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.FeederConstants;;
+import frc.robot.Constants.ConversionConstants;
+import frc.robot.Constants.PIDConstants;
+import frc.robot.Constants.RobotMap;;
 
 /**
  * Feedersubsystem is responsible for feeding balls into the shoote
@@ -26,8 +28,8 @@ public class FeederSubsystem extends SubsystemBase {
   private DigitalOutput m_middleSensor;
   private DigitalOutput m_topSensor;
 
-  private final double m_indexPowerInitial = FeederConstants.indexPower;
-  private final double m_indexSetpointInitial = FeederConstants.indexSetpoint;
+  private final double m_indexPowerInitial = PIDConstants.indexPower;
+  private final double m_indexSetpointInitial = PIDConstants.indexSetpoint;
   private double m_indexPower = m_indexPowerInitial;
   private double m_indexSetpoint = m_indexSetpointInitial;
 
@@ -45,12 +47,12 @@ public class FeederSubsystem extends SubsystemBase {
   // ---- Constructor -----
   public FeederSubsystem() {
 
-    m_hopperMotor = new WPI_VictorSPX(FeederConstants.kHopperVictorSPX);
-    m_towerMotor = new WPI_VictorSPX(FeederConstants.kTowerVictorSPX);
+    m_hopperMotor = new WPI_VictorSPX(RobotMap.kHopperVictorSPX);
+    m_towerMotor = new WPI_VictorSPX(RobotMap.kTowerVictorSPX);
 
-    m_bottomSensor = new DigitalOutput(FeederConstants.kIRSensorBottom);
-    m_middleSensor = new DigitalOutput(FeederConstants.kIRSensorMiddle);
-    m_topSensor = new DigitalOutput(FeederConstants.kIRSensorTop);
+    m_bottomSensor = new DigitalOutput(RobotMap.kIRSensorBottom);
+    m_middleSensor = new DigitalOutput(RobotMap.kIRSensorMiddle);
+    m_topSensor = new DigitalOutput(RobotMap.kIRSensorTop);
 
     for(WPI_VictorSPX feederMotors: new WPI_VictorSPX[]{m_hopperMotor, m_towerMotor}){
       feederMotors.configFactoryDefault();

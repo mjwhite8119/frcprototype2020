@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.PIDConstants;
 import frc.robot.Constants.RobotMap;
 import frc.robot.types.ControlPanelColor;
 import frc.robot.utilities.ColorMatcher;
@@ -45,12 +46,12 @@ public class ControlPanelSubsystem extends SubsystemBase {
     m_motor.setIdleMode(IdleMode.kCoast);
 
     // set PID coefficients
-    m_pidController.setP(RobotMap.kPanelP);
-    m_pidController.setI(RobotMap.kPanelI);
-    m_pidController.setD(RobotMap.kPanelD);
-    m_pidController.setIZone(RobotMap.kPanelIzone);
-    m_pidController.setFF(RobotMap.kPanelFF);
-    m_pidController.setOutputRange(RobotMap.kMinOutput, RobotMap.kMaxOutput);
+    m_pidController.setP(PIDConstants.kPanelP);
+    m_pidController.setI(PIDConstants.kPanelI);
+    m_pidController.setD(PIDConstants.kPanelD);
+    m_pidController.setIZone(PIDConstants.kPanelIzone);
+    m_pidController.setFF(PIDConstants.kPanelFF);
+    m_pidController.setOutputRange(PIDConstants.kMinOutput, PIDConstants.kMaxOutput);
   }
 
   @Override
