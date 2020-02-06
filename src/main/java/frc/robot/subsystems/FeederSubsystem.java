@@ -38,13 +38,15 @@ public class FeederSubsystem extends SubsystemBase {
   }
 
   public enum IndexState{
-    WAITING_TO_INDEX, READY_TO_INDEX, INDEXING, FULL, HALTED;
+    WAITING_TO_INDEX, READY_TO_INDEX, INDEXING, FULL_BUT_RECEIVING, FULL, HALTED;
   }
 
   private HopperState m_hopperState = HopperState.STOPPED;
   private IndexState m_indexState = IndexState.WAITING_TO_INDEX;
 
-  // ---- Constructor -----
+  // -----------------------------------------------------------
+  // Initialization
+  // -----------------------------------------------------------
   public FeederSubsystem() {
 
     m_hopperMotor = new WPI_VictorSPX(RobotMap.kHopperVictorSPX);
@@ -76,41 +78,16 @@ public class FeederSubsystem extends SubsystemBase {
    
   }
 
+  // -----------------------------------------------------------
+  // Process Logic
+  // -----------------------------------------------------------
   @Override
   public void periodic() {
     // Moves incoming ball up the tower. 
     // This method will be called once per scheduler
-    index();
+    // index();
   }
 
-  // Set power to the hopper motor
-  public void setHopperPower(double power){
-    m_hopperMotor.set(ControlMode.PercentOutput, power);
-  }
-
-  // Set power to the tower motor
-  public void setIndexPower(double power){
-    m_towerMotor.set(ControlMode.PercentOutput, power);
-  } 
-
-  // Stop the hopper
-  public void startHopper() {
-    m_hopperMotor.setInverted(false);
-    m_hopperState = HopperState.FEEDING;
-    setHopperPower(0.4);
-  }
-  // Stop the hopper
-  public void stopHopper() {
-    setHopperPower(0);
-    m_hopperState = HopperState.STOPPED;
-  }
-
-  // Stop the hopper
-  public void reverseHopper() {
-    m_hopperMotor.setInverted(true);
-    m_hopperState = HopperState.REVERSED;
-    setHopperPower(0.4);
-  }
 
   /**
    * Moves the ball up the tower.  There are two options for doing this
@@ -132,55 +109,84 @@ public class FeederSubsystem extends SubsystemBase {
 
   }
 
-  public void stopIndex() {
-    setIndexPower(0);
-  }
-
-  //Called in a loop at periodic
-  //Handles the indexing of balls in the tower
-  public void index(){
+  // Called in a loop at periodic
+  // Handles the indexing of balls in the tower
+  public void index() {
 
     // Check if we should take any action on the index
     checkIndexState();
 
+    // Still indexing so we're out of here
+    if (m_indexState == IndexState.INDEXING) {
+      return;
+    }
+
+    // Ball at the top but empty on the bottom - states 5 & 6
+    if (m_indexState == IndexState.FULL_BUT_RECEIVING) {
+      stopIndex();     
+      startHopper(); // The bottom slot is empty so start the hopper
+      return;
+    }  
+
+    // Ball at the top and bottom so stop the index - states 7 & 8
+    if (m_indexState == IndexState.FULL) {  
+      stopIndex();
+      return; 
+    }
+
+    // Got a ball in the bottom so index - states 3 & 4
     if (m_indexState == IndexState.READY_TO_INDEX) {
       stopHopper(); // Prevent more balls from coming in
       startIndex(); // Move the ball up the tower
-    } else {
-      stopIndex(); // Done moving ball up the tower    
-    }
+      return;
+    } 
 
+    // Bottom slot is empty so waiting for a ball - states 1 & 2
     if (m_indexState == IndexState.WAITING_TO_INDEX) {
+      stopIndex(); // Index should be stopped
       startHopper(); // Get more balls in
     }
 
   }
 
-  /** 
-   * Check the state of the index to determine what action should 
-   * be taken next.
-  */
-  public void checkIndexState(){
+  /**
+   * Check the state of the index to determine what action should be taken next.
+   */
+  public void checkIndexState() {
 
-    // There's a ball at the top so don't index
-    if(topSensorTripped()){
-      m_indexState = IndexState.FULL;
+    // The bottom sensor will remain tripped until the ball clears the
+    // sensor, so keep it in the INDEXING state.
+    if (bottomSensorTripped() && m_indexState == IndexState.INDEXING) {
       return;
     }
 
-    if(middleSensorTripped()){
-      m_indexState = IndexState.WAITING_TO_INDEX;
+    // Ball at the top - states 5,6,7,8
+    if (topSensorTripped()) {
+      if (bottomSensorTripped()) {
+        m_indexState = IndexState.FULL;  // states 7 & 8
+      } else {
+        m_indexState = IndexState.FULL_BUT_RECEIVING; // states 5 & 6
+      }    
       return;
     }
 
-    if(bottomSensorTripped() && !topSensorTripped()){
-      // We have a ball on the bottom and the top slot is open
-      m_indexState = IndexState.READY_TO_INDEX;
+    // // Ball in the middle with bottom slot empty - state 2
+    // if (middleSensorTripped() && !bottomSensorTripped()) {
+    //   m_indexState = IndexState.WAITING_TO_INDEX;
+    //   return;
+    // }
+
+    // Ball on the bottom with top slot is open
+    if (bottomSensorTripped() && !topSensorTripped()) {
+      m_indexState = IndexState.READY_TO_INDEX; // states 3 & 4
     } else {
       // Waiting for a new ball to come in and top slot is open
-      m_indexState = IndexState.WAITING_TO_INDEX;
+      m_indexState = IndexState.WAITING_TO_INDEX; // state 1 & 2
     }
 
+    // if(topSensorTripped() && !middleSensorTripped()){
+    //   //Reset ball to mid?
+    // }
   }
 
   public void setIndexState(IndexState state) {
@@ -191,6 +197,9 @@ public class FeederSubsystem extends SubsystemBase {
     m_hopperState = state;
   }
 
+  // -----------------------------------------------------------
+  // Sensor Input
+  // -----------------------------------------------------------
   public boolean bottomSensorTripped(){
     return m_bottomSensor.get();
   }
@@ -201,6 +210,49 @@ public class FeederSubsystem extends SubsystemBase {
 
   public boolean topSensorTripped(){
     return m_topSensor.get();
+  }
+
+  public void resetIndexEncoder(){
+    m_towerMotor.setSelectedSensorPosition(0);
+  }
+
+  // -----------------------------------------------------------
+  // Actavator Output
+  // -----------------------------------------------------------
+
+  // Set power to the hopper motor
+  public void setHopperPower(double power){
+    m_hopperMotor.set(ControlMode.PercentOutput, power);
+  }
+
+  // Set power to the tower motor
+  public void setIndexPower(double power){
+    m_towerMotor.set(ControlMode.PercentOutput, power);
+  } 
+
+  // Start the hopper
+  public void startHopper() {
+    m_hopperMotor.setInverted(false);
+    m_hopperState = HopperState.FEEDING;
+    setHopperPower(0.4);
+  }
+
+  // Stop the hopper
+  public void stopHopper() {
+    setHopperPower(0);
+    m_hopperState = HopperState.STOPPED;
+  }
+
+  // Reverse the hopper
+  public void reverseHopper() {
+    m_hopperMotor.setInverted(true);
+    m_hopperState = HopperState.REVERSED;
+    setHopperPower(0.4);
+  }
+
+  // Stop the indexer
+  public void stopIndex() {
+    setIndexPower(0);
   }
 
   // Toggle the hopper on and off while in FEEDING state.
@@ -221,9 +273,9 @@ public class FeederSubsystem extends SubsystemBase {
     }  
   }
 
-  public void resetIndexEncoder(){
-    m_towerMotor.setSelectedSensorPosition(0);
-  }
+  // -----------------------------------------------------------
+  // Testing
+  // -----------------------------------------------------------
 
   // These are for calibrating the index 
   public void configIndexPower() {
